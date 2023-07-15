@@ -16,6 +16,7 @@ import root.repository.UserRepository;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.Map;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,5 +84,21 @@ public class TokenProviderTest {
         // then
         val userDetails = (UserDetails) authentication.getPrincipal();
         assertThat(userDetails.getUsername()).isEqualTo(userEmail);
+    }
+
+    @DisplayName("getUserId 를 이용하여 토큰으로부터 유저 아이디 정보를 가져올 수 있음")
+    @Test
+    void  getUserId() {
+        // given
+        Long userId = 1L;
+        String token = JwtFactory.builder()
+                .claims(Map.of("id", userId))
+                .build()
+                .createToken(jwtProperties);
+        // when
+        Long userIdByToken = tokenProvider.getUserId(token);
+
+        // then
+        assertThat(userIdByToken).isEqualTo(userId);
     }
 }
